@@ -1,28 +1,43 @@
 import Link from "next/link"
-import { Gift, Snowflake } from "lucide-react"
+import Image from "next/image"
+import { Snowflake } from "lucide-react"
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full bg-red-700 text-white shadow-xl transition-all">
+    <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-red-700 to-red-800 text-white shadow-xl transition-all">
       
-      {/* Contenedor centrado (justify-center) porque ya no hay carrito a la derecha */}
-      <div className="mx-auto flex h-16 items-center justify-center px-4">
+      {/* Contenedor Principal */}
+      <div className="mx-auto flex h-16 items-center justify-center px-4 relative overflow-hidden">
         
+        {/* Decoración de fondo sutil (Opcional) */}
+        <div className="absolute -left-4 top-0 opacity-5 text-6xl select-none pointer-events-none">🎄</div>
+
         {/* Logo / Marca */}
         <Link 
           href="/" 
-          className="group flex items-center gap-3 transition-opacity hover:opacity-90"
+          className="group flex items-center gap-2 transition-transform hover:scale-[1.02] z-10"
         >
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/20 shadow-inner">
-            <Gift className="h-6 w-6 text-amber-300 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12" />
-            <Snowflake className="absolute -top-1 -right-1 h-3 w-3 text-white animate-pulse" />
+          {/* HE ELIMINADO EL CONTENEDOR (bg-white, rounded-full, etc).
+             Ahora la imagen está "desnuda" sobre el fondo rojo.
+          */}
+          <div className="relative h-10 w-10 flex-shrink-0">
+            <Image 
+              src="/logo.png" 
+              alt="Logo" 
+              fill
+              // 'object-contain' asegura que el logo no se recorte
+              className="object-contain drop-shadow-md"
+              priority
+            />
+            {/* Copo de nieve decorativo flotando al lado */}
+            <Snowflake className="absolute -top-2 -right-2 h-4 w-4 text-amber-200 animate-pulse" />
           </div>
           
           <div className="flex flex-col items-start">
-            <span className="font-black text-2xl tracking-tight leading-none text-white drop-shadow-sm">
-              Silva<span className="text-amber-300">Navidad</span>
+            <span className="font-black text-xl tracking-tight leading-none text-white drop-shadow-sm font-sans">
+              Novedades<span className="text-amber-300">Silva</span>
             </span>
-            <span className="text-[10px] font-medium text-red-200 tracking-[0.2em] uppercase">
+            <span className="text-[9px] font-bold text-red-100 tracking-[0.3em] uppercase bg-red-900/20 px-1 rounded mt-0.5">
               Tienda Oficial
             </span>
           </div>
@@ -30,8 +45,8 @@ export function Header() {
 
       </div>
 
-      {/* Borde inferior decorativo estilo "Bastón de Caramelo" */}
-      <div className="h-1.5 w-full bg-[repeating-linear-gradient(45deg,#fff,#fff_10px,#166534_10px,#166534_20px)] shadow-inner opacity-90" />
+      {/* Borde inferior decorativo */}
+      <div className="h-1.5 w-full bg-[repeating-linear-gradient(45deg,#fff,#fff_10px,#15803d_10px,#15803d_20px)] shadow-inner opacity-90" />
     </header>
   )
 }
