@@ -19,11 +19,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return () => unsubscribe();
   }, [router, pathname]);
 
-  if (loading) return <div className="h-screen w-full flex items-center justify-center bg-slate-900 text-white">Cargando...</div>;
+  if (loading) return (
+    <div className="h-screen w-full flex items-center justify-center bg-slate-950 text-slate-400">
+      <div className="animate-pulse">Cargando panel...</div>
+    </div>
+  );
 
-  // LAYOUT FULL SCREEN OSCURO
+  // LAYOUT BASE: Fondo muy oscuro (slate-950) y texto claro
   return (
-    <div className="min-h-screen w-full bg-slate-900 text-slate-100">
+    <div className="min-h-screen w-full bg-slate-950 text-slate-200 selection:bg-red-500 selection:text-white">
       {children}
     </div>
   );
