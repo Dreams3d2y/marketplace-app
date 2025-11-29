@@ -1,83 +1,64 @@
 import Link from "next/link"
-import Image from "next/image"
-import { getCategoryById, getProductsByCategory } from "@/lib/firebase"
-import { ArrowLeft, Star, Gift } from "lucide-react"
+import { getCategoryById, getPaginatedProducts } from "@/lib/firebase" 
+import { ArrowLeft, Search } from "lucide-react"
 import { notFound } from "next/navigation"
+import ProductGridInfinite from "@/components/ui/product-grid-infinite"
+
+// --- OPTIMIZACIÓN CRÍTICA ---
+// Al quitar 'force-dynamic' y poner esto, Next.js guarda esta página en caché por 1 hora.
+// Si entran 1,000 personas, solo cuenta como 1 visita a Firebase.
+// Cuando tú editas algo en el Admin, la caché se borra automáticamente.
+export const revalidate = 3600; 
 
 export default async function CategoryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   
-  // 1. Buscar datos en Firebase
-  const category = await getCategoryById(id)
-  const categoryProducts = await getProductsByCategory(id)
+  // Ejecutamos las dos consultas en paralelo
+  const [category, initialProducts] = await Promise.all([
+    getCategoryById(id),
+    getPaginatedProducts(id) 
+  ])
 
   if (!category) {
     return notFound()
   }
 
   return (
-    <div className="space-y-6 pb-20">
-      {/* Header */}
-      <div className="flex items-center gap-4 px-4 pt-4">
-        <Link
-          href="/"
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm hover:bg-gray-50 transition-colors"
-        >
-          <ArrowLeft className="h-5 w-5 text-gray-600" />
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-            <span>{category.icon || "🎁"}</span> 
-            {category.name}
-          </h1>
-          <p className="text-sm text-slate-500">{categoryProducts.length} juguetes encontrados</p>
+    <div className="min-h-screen bg-slate-50 pb-20">
+      
+      {/* Header Estético y Sticky */}
+      <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-100 px-4 py-3">
+        <div className="flex items-center gap-4">
+            <Link
+            href="/"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
+            >
+            <ArrowLeft className="h-5 w-5" />
+            </Link>
+            <div className="flex-1">
+                <h1 className="text-lg font-bold text-slate-800 flex items-center gap-2 leading-none">
+                    <span>{category.icon || "🎁"}</span> 
+                    {category.name}
+                </h1>
+                <p className="text-xs text-slate-500 mt-0.5 font-medium">Envíos a todo el Perú 🇵🇪</p>
+            </div>
+            {/* Botón de búsqueda decorativo (puedes redirigirlo al catálogo si quieres) */}
+            <Link href="/catalog" className="h-9 w-9 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-50">
+                <Search size={20} />
+            </Link>
         </div>
       </div>
 
-      {/* Products Grid */}
-      <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2">
-        {categoryProducts.map((product) => (
-          <Link
-            key={product.id}
-            href={`/product/${product.id}`}
-            className="group flex flex-row sm:flex-col overflow-hidden rounded-xl border bg-white shadow-sm transition-all hover:shadow-md"
-          >
-            {/* Imagen */}
-            <div className="relative h-32 w-32 sm:h-48 sm:w-full shrink-0 bg-gray-100">
-              <Image
-                src={product.imageUrl || "/placeholder.svg"}
-                alt={product.name}
-                fill
-                className="object-cover transition-transform group-hover:scale-105"
-              />
-            </div>
-            
-            {/* Info */}
-            <div className="flex flex-1 flex-col justify-between p-4">
-              <div>
-                <h3 className="font-semibold text-slate-800 line-clamp-2">{product.name}</h3>
-                <div className="mt-1 flex items-center gap-1">
-                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                  <span className="text-xs text-slate-500">4.9 (Calidad Premium)</span>
-                </div>
-              </div>
-              <div className="mt-3 flex items-center justify-between">
-                <span className="text-lg font-black text-red-600">S/ {product.price.toLocaleString()}</span>
-                <span className="rounded-full bg-red-50 px-2 py-1 text-xs font-bold text-red-600">Ver juguete</span>
-              </div>
-            </div>
-          </Link>
-        ))}
+      {/* Título de sección */}
+      <div className="px-4 py-4">
+        <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider">
+            Explora los mejores juguetes
+        </h2>
       </div>
 
-      {/* Estado Vacío */}
-      {categoryProducts.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-12 text-center text-slate-400">
-          <Gift className="h-16 w-16 mb-4 opacity-20" />
-          <h3 className="text-lg font-medium text-slate-600">Jo Jo Jo...</h3>
-          <p>Los duendes están fabricando más juguetes para esta categoría.</p>
-        </div>
-      )}
+      {/* Grid de Productos (Cliente) */}
+      <ProductGridInfinite initialProducts={initialProducts} categoryId={id} />
+      
     </div>
   )
 }
