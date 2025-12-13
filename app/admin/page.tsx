@@ -410,7 +410,8 @@ export default function AdminDashboard() {
                               <div key={p.id} className="bg-[#161b28] border border-slate-800/60 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-blue-900/10 hover:border-blue-500/50 hover:-translate-y-1 transition-all duration-300 group flex flex-col">
                                   <div className="aspect-square relative bg-[#0f111a] overflow-hidden border-b border-slate-800/60">
                                       <Image src={p.imageUrl || "/placeholder.svg"} alt={p.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500"/>
-                                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-[2px]">
+                                      {/* EDICIÓN: Agregado clases 'opacity-100 lg:opacity-0' para que sea visible en móvil siempre */}
+                                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-3 backdrop-blur-[2px] transition-all opacity-100 lg:opacity-0 lg:group-hover:opacity-100">
                                           <button onClick={() => handleEditProduct(p)} className="bg-white text-slate-900 p-3 rounded-xl hover:bg-blue-500 hover:text-white hover:scale-110 transition-all shadow-xl" title="Editar"><Edit size={18}/></button>
                                           <button onClick={() => handleDelete("products", p.id)} className="bg-white text-slate-900 p-3 rounded-xl hover:bg-red-500 hover:text-white hover:scale-110 transition-all shadow-xl" title="Eliminar"><Trash2 size={18}/></button>
                                       </div>
@@ -486,7 +487,8 @@ export default function AdminDashboard() {
                              onClick={() => filterByCategoryAndRedirect(c.id)}
                              className="bg-[#161b28] rounded-3xl p-6 flex flex-col items-center text-center border border-slate-800 hover:border-blue-500/50 hover:bg-[#1c2230] hover:shadow-2xl hover:shadow-blue-900/10 hover:-translate-y-2 transition-all group relative cursor-pointer"
                            >
-                               <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-all z-10 scale-90 group-hover:scale-100">
+                               {/* EDICIÓN: Agregado clases 'opacity-100 lg:opacity-0' para que sea visible en móvil siempre */}
+                               <div className="absolute top-3 right-3 flex gap-1 z-10 transition-all opacity-100 scale-100 lg:opacity-0 lg:group-hover:opacity-100 lg:scale-90 lg:group-hover:scale-100">
                                    <button onClick={(e) => {e.stopPropagation(); handleEditCategory(c);}} className="p-2 bg-[#0f111a] text-blue-400 rounded-xl hover:bg-blue-500 hover:text-white transition-colors border border-slate-800 shadow-lg"><Edit size={14}/></button>
                                    <button onClick={(e) => {e.stopPropagation(); handleDelete("categories", c.id);}} className="p-2 bg-[#0f111a] text-red-400 rounded-xl hover:bg-red-500 hover:text-white transition-colors border border-slate-800 shadow-lg"><Trash2 size={14}/></button>
                                </div>
